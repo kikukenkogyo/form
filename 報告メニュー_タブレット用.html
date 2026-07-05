@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>報告メニュー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  :root{
+    --bg-kogu:#E3F0FF; --ac-kogu:#1D6FE0; --nm-kogu:#1457B0;
+    --bg-gas:#FFEEDD;  --ac-gas:#F47A1F;  --nm-gas:#C85A0C;
+    --bg-att:#E2F6E9;  --ac-att:#1F9E54;  --nm-att:#167A40;
+  }
+  body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,sans-serif;color:#1F2421;}
+  .root{min-height:100vh;background:#EDEBE6;display:flex;flex-direction:column;padding:3.6vh 3.4vw 3vh;}
+  .head{flex:0 0 auto;text-align:center;padding-bottom:9vh;}
+  .head h1{margin:0;font-weight:900;font-size:clamp(28px,3.4vw,48px);letter-spacing:.02em;line-height:1.1;}
+  .grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6.6vw;align-content:safe center;justify-content:center;width:100%;max-width:1600px;max-height:660px;margin:0 auto;padding:1.2vh 1vw 2vh;}
+  .card{text-decoration:none;color:inherit;border-radius:22px;border:2px solid;box-shadow:0 22px 40px rgba(31,36,33,.32),0 8px 14px rgba(31,36,33,.22),0 2px 4px rgba(31,36,33,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3vh 1.6vw 2.4vh;transition:transform .1s ease,box-shadow .1s ease;}
+  .card:active{transform:translateY(6px) scale(.965);box-shadow:0 6px 12px rgba(31,36,33,.22);}
+  .icon{width:clamp(134px,12.5vw,188px);height:clamp(134px,12.5vw,188px);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;}
+  .title{font-weight:900;line-height:1.15;margin-top:3vh;height:clamp(96px,9.6vw,138px);display:flex;align-items:center;justify-content:center;white-space:nowrap;}
+  .chips{display:flex;gap:7px;flex-wrap:nowrap;justify-content:center;margin-top:1.8vh;}
+  .chips span{border:2px solid;border-radius:999px;padding:5px 11px;font-weight:700;font-size:clamp(13px,1.4vw,20px);white-space:nowrap;}
+  .report{margin-top:3vh;padding-top:2.4vh;width:100%;min-height:clamp(98px,10vw,138px);font-size:clamp(16px,1.75vw,24px);font-weight:500;line-height:1.55;}
+  .report .lbl{display:block;font-weight:700;font-size:.78em;letter-spacing:.1em;margin-bottom:6px;}
+  /* 工具 */
+  .c-kogu{background:var(--bg-kogu);border-color:var(--ac-kogu);}
+  .c-kogu .icon{background:var(--ac-kogu);}
+  .c-kogu .title{font-size:clamp(40px,4.3vw,66px);line-height:1.05;color:var(--nm-kogu);}
+  .c-kogu .chips span{border-color:var(--ac-kogu);color:var(--ac-kogu);}
+  .c-kogu .report{color:#46505A;}
+  .c-kogu .report .lbl{color:var(--ac-kogu);}
+  /* ガス */
+  .c-gas{background:var(--bg-gas);border-color:var(--ac-gas);}
+  .c-gas .icon{background:var(--ac-gas);}
+  .c-gas .title{font-size:clamp(32px,3.6vw,54px);color:var(--nm-gas);}
+  .c-gas .chips span{border-color:var(--ac-gas);color:var(--ac-gas);}
+  .c-gas .report{color:#5C4A3B;}
+  .c-gas .report .lbl{color:var(--ac-gas);}
+  /* アタッチ */
+  .c-att{background:var(--bg-att);border-color:var(--ac-att);}
+  .c-att .icon{background:var(--ac-att);}
+  .c-att .title{font-size:clamp(36px,4vw,60px);color:var(--nm-att);}
+  .c-att .chips span{border-color:var(--ac-att);color:var(--ac-att);}
+  .c-att .report{color:#4C5645;}
+  .c-att .report .lbl{color:var(--ac-att);}
+</style>
+</head>
+<body>
+<div class="root">
+
+  <header class="head">
+    <h1>どれを報告しますか？</h1>
+    <p style="margin:1.6vh 0 0;font-weight:500;font-size:clamp(14px,1.5vw,20px);color:#8A867C;letter-spacing:.02em;">※アプリ立ち上げ直後は接続速度が遅くなることがあります</p>
+  </header>
+
+  <div class="grid">
+
+    <a class="card c-kogu" href="https://kikuken-pages45451588454332.notion.site/3893c51f6fc680388d53f0ccc5e688be?pvs=105" target="_self">
+      <div class="icon">
+        <svg viewBox="0 0 100 100" width="86%" height="86%" fill="currentColor">
+          <g>
+            <rect x="27" y="11" width="46" height="3.4" rx="1.7"/>
+            <rect x="31" y="13" width="3" height="6"/>
+            <rect x="66" y="13" width="3" height="6"/>
+            <rect x="35" y="15" width="30" height="9" rx="4"/>
+            <rect x="30" y="22" width="40" height="17" rx="4"/>
+            <circle cx="40" cy="30.5" r="4.3" fill="var(--bg-kogu)"/>
+            <circle cx="40" cy="30.5" r="1.4"/>
+            <rect x="49" y="26.5" width="16" height="9" rx="1.5" fill="var(--bg-kogu)"/>
+            <rect x="51.5" y="29" width="3.2" height="4" rx=".5"/>
+            <rect x="56.5" y="29" width="3.2" height="4" rx=".5"/>
+            <rect x="61" y="29.5" width="2.2" height="3.2" rx=".5"/>
+            <rect x="33" y="39" width="5" height="4.5"/>
+            <rect x="62" y="39" width="5" height="4.5"/>
+          </g>
+          <g transform="translate(27 67) rotate(-28)">
+            <rect x="-12" y="-7" width="19" height="14" rx="7"/>
+            <rect x="-14.5" y="-4" width="3" height="8" rx="1.5"/>
+            <rect x="7" y="-4.5" width="4.5" height="9" rx="2"/>
+            <rect x="11.5" y="-1.6" width="11" height="3.2" rx="1"/>
+            <path d="M-6 7 L4 7 L1.8 21 L-4.5 21 Z"/>
+            <rect x="-6.5" y="19" width="11" height="5.5" rx="2"/>
+            <rect x="1.5" y="8" width="3" height="4.5" rx="1" fill="var(--bg-kogu)"/>
+          </g>
+          <g transform="translate(73 67) rotate(208)">
+            <ellipse cx="-13" cy="0" rx="6.5" ry="6"/>
+            <ellipse cx="-13" cy="0" rx="3.2" ry="3" fill="var(--bg-kogu)"/>
+            <rect x="-8" y="-3" width="6" height="6" rx="2"/>
+            <rect x="-7" y="-7" width="18" height="14" rx="6"/>
+            <rect x="11" y="-5" width="3" height="10" rx="1"/>
+            <rect x="14" y="-1.5" width="11" height="2.8" rx="1"/>
+            <path d="M15 1.3 l1.8 2.6 l1.8 -2.6 z M18.6 1.3 l1.8 2.6 l1.8 -2.6 z M22.2 1.3 l1.8 2.6 l1.8 -2.6 z" fill="currentColor"/>
+          </g>
+        </svg>
+      </div>
+      <div class="title">工具</div>
+      <div class="chips"><span>持出</span><span>返却</span><span>修理</span></div>
+      <div class="report"><span class="lbl">報告対象</span>セーバーソー・インパクト・グリスガン・テープライト・発電機 など</div>
+    </a>
+
+    <a class="card c-gas" href="https://kikuken-pages45451588454332.notion.site/3893c51f6fc68035b7a7c82520986f5c?pvs=105" target="_self">
+      <div class="icon">
+        <svg viewBox="0 0 100 100" width="76%" height="76%" fill="currentColor">
+          <path d="M16 34 q7 -14 14 0 v50 q0 5 -5 5 h-4 q-5 0 -5 -5 z"/>
+          <rect x="20" y="22" width="6" height="12" rx="2"/>
+          <rect x="15" y="50" width="16" height="4" fill="var(--bg-gas)"/>
+          <path d="M34 48 q6.5 -13 13 0 v36 q0 5 -5 5 h-3 q-5 0 -5 -5 z"/>
+          <rect x="37.5" y="38" width="6" height="10" rx="2"/>
+          <rect x="33" y="60" width="15" height="3.6" fill="var(--bg-gas)"/>
+          <g transform="translate(36 24) rotate(35)" fill="currentColor">
+            <rect x="2.5" y="-6" width="9" height="9" rx="2"/>
+            <path d="M4.5 -6 L9.5 -6 L7 -16 Z"/>
+            <rect x="10" y="-3.4" width="30" height="2.2" rx="1.1"/>
+            <rect x="10" y="0.6" width="30" height="2.2" rx="1.1"/>
+            <rect x="22" y="-7.4" width="14" height="2.6" rx="1.3"/>
+            <rect x="40" y="-5" width="8" height="12" rx="2.5"/>
+            <rect x="48" y="-3.6" width="16" height="8.4" rx="4.2"/>
+            <circle cx="44" cy="10" r="3.1"/>
+            <circle cx="53" cy="9.6" r="3.1"/>
+            <circle cx="44" cy="10" r="1.1" fill="var(--bg-gas)"/>
+            <circle cx="53" cy="9.6" r="1.1" fill="var(--bg-gas)"/>
+            <rect x="64" y="-2.4" width="7" height="2.8" rx="1.4"/>
+            <rect x="64" y="2" width="7" height="2.8" rx="1.4"/>
+          </g>
+        </svg>
+      </div>
+      <div class="title">ガス溶断<br>器具類</div>
+      <div class="chips"><span>持出</span><span>返却</span><span>修理</span></div>
+      <div class="report"><span class="lbl">報告対象</span>ボンベ・バーナー・メーター など</div>
+    </a>
+
+    <a class="card c-att" href="https://kikuken-pages45451588454332.notion.site/38c3c51f6fc680c381f6d436d22a17e3?pvs=105" target="_self">
+      <div class="icon">
+        <svg viewBox="0 0 100 100" width="80%" height="80%" fill="currentColor">
+          <rect x="41" y="5.5" width="18" height="3.4" rx="1.7"/>
+          <rect x="43" y="8" width="3.2" height="6" rx="1"/>
+          <rect x="53.8" y="8" width="3.2" height="6" rx="1"/>
+          <ellipse cx="50" cy="21" rx="20" ry="9"/>
+          <circle cx="50" cy="21" r="5" fill="var(--bg-att)"/>
+          <circle cx="50" cy="21" r="2" fill="currentColor"/>
+          <circle cx="37" cy="21" r="1.4" fill="var(--bg-att)"/>
+          <circle cx="42" cy="16.5" r="1.4" fill="var(--bg-att)"/>
+          <circle cx="58" cy="16.5" r="1.4" fill="var(--bg-att)"/>
+          <circle cx="63" cy="21" r="1.4" fill="var(--bg-att)"/>
+          <circle cx="42" cy="25.5" r="1.4" fill="var(--bg-att)"/>
+          <circle cx="58" cy="25.5" r="1.4" fill="var(--bg-att)"/>
+          <path d="M37.5 28 L62.5 28 L60.5 52 L39.5 52 Z"/>
+          <circle cx="43" cy="33" r="1.6" fill="var(--bg-att)"/>
+          <circle cx="57" cy="33" r="1.6" fill="var(--bg-att)"/>
+          <rect x="44" y="38" width="12" height="2.4" rx="1.2" fill="var(--bg-att)"/>
+          <circle cx="50" cy="49" r="2.6" fill="var(--bg-att)"/>
+          <g transform="rotate(15 27 39)">
+            <rect x="21" y="27" width="11" height="17" rx="5.5"/>
+            <rect x="24.5" y="42" width="4" height="9" rx="2"/>
+          </g>
+          <g transform="rotate(-15 73 39)">
+            <rect x="68" y="27" width="11" height="17" rx="5.5"/>
+            <rect x="71.5" y="42" width="4" height="9" rx="2"/>
+          </g>
+          <path d="M40 52 C32 54 21 59 18 70 C16 78 20.5 87 28 88 C34 89 40 85 41 78 C37 81 30.5 79 29.5 71.5 C28.5 64 33 59 41 55.5 Z"/>
+          <path d="M60 52 C68 54 79 59 82 70 C84 78 79.5 87 72 88 C66 89 60 85 59 78 C63 81 69.5 79 70.5 71.5 C71.5 64 67 59 59 55.5 Z"/>
+          <ellipse cx="28" cy="71" rx="3.1" ry="7.5" transform="rotate(-20 28 71)" fill="var(--bg-att)"/>
+          <ellipse cx="72" cy="71" rx="3.1" ry="7.5" transform="rotate(20 72 71)" fill="var(--bg-att)"/>
+          <path d="M35 63 l5.5 2 l-5.5 2 z" fill="var(--bg-att)"/>
+          <path d="M65 63 l-5.5 2 l5.5 2 z" fill="var(--bg-att)"/>
+          <path d="M31 74 l5.5 1.8 l-5.5 1.8 z" fill="var(--bg-att)"/>
+          <path d="M69 74 l-5.5 1.8 l5.5 1.8 z" fill="var(--bg-att)"/>
+          <rect x="45" y="51" width="10" height="6" rx="2"/>
+        </svg>
+      </div>
+      <div class="title">アタッチ<br>メント</div>
+      <div class="chips"><span>持出</span><span>返却</span></div>
+      <div class="report"><span class="lbl">報告対象</span>圧砕機・小割機・カッター・ブレーカー・グラップル など</div>
+    </a>
+
+  </div>
+
+</div>
+</body>
+</html>

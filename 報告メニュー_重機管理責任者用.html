@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>報告メニュー（重機管理責任者）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  :root{
+    --bg-juki:#FCE6E5; --ac-juki:#D33A33; --nm-juki:#A62823;
+    --bg-att:#E2F6E9;  --ac-att:#1F9E54;  --nm-att:#167A40;
+  }
+  body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,sans-serif;color:#1F2421;}
+  .root{min-height:100vh;background:#EDEBE6;display:flex;flex-direction:column;padding:3.6vh 3.4vw 3vh;}
+  .head{flex:0 0 auto;text-align:center;padding-bottom:7vh;}
+  .head h1{margin:0;font-weight:900;font-size:clamp(28px,3.4vw,48px);letter-spacing:.02em;line-height:1.1;}
+  .grid{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:6.6vw;align-content:safe center;justify-content:center;width:100%;max-width:1280px;max-height:660px;margin:0 auto;padding:1.2vh 1vw 2vh;}
+  .card{text-decoration:none;color:inherit;border-radius:22px;border:2px solid;box-shadow:0 22px 40px rgba(31,36,33,.32),0 8px 14px rgba(31,36,33,.22),0 2px 4px rgba(31,36,33,.18);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3vh 1.6vw 2.4vh;transition:transform .1s ease,box-shadow .1s ease;}
+  .card:active{transform:translateY(6px) scale(.965);box-shadow:0 6px 12px rgba(31,36,33,.22);}
+  .icon{position:relative;width:clamp(134px,12.5vw,188px);height:clamp(134px,12.5vw,188px);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;}
+  .title{font-weight:900;font-size:clamp(30px,3.3vw,48px);line-height:1.15;margin-top:3vh;height:clamp(96px,9.6vw,138px);display:flex;align-items:center;justify-content:center;white-space:nowrap;}
+  .chips{display:flex;gap:7px;flex-wrap:nowrap;justify-content:center;margin-top:1.8vh;}
+  .chips span{border:2px solid;border-radius:999px;padding:5px 11px;font-weight:700;font-size:clamp(13px,1.4vw,20px);white-space:nowrap;}
+  .report{margin-top:3vh;padding-top:2.4vh;width:100%;min-height:clamp(98px,10vw,138px);font-size:clamp(16px,1.75vw,24px);font-weight:500;line-height:1.55;}
+  .report .lbl{display:block;font-weight:700;font-size:.78em;letter-spacing:.1em;margin-bottom:6px;}
+  .bandaid{position:absolute;left:50%;top:50%;width:74%;transform-origin:center;filter:drop-shadow(0 3px 5px rgba(0,0,0,.28));pointer-events:none;opacity:0;transform:translate(-50%,-50%) rotate(28deg) scale(0);}
+  .card.applied .bandaid{opacity:1;transform:translate(-50%,-50%) rotate(28deg) scale(1);animation:bandPop .42s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes bandPop{0%{transform:translate(-50%,-50%) rotate(28deg) scale(0);}60%{transform:translate(-50%,-50%) rotate(28deg) scale(1.14);}100%{transform:translate(-50%,-50%) rotate(28deg) scale(1);}}
+  /* 重機 */
+  .c-juki{background:var(--bg-juki);border-color:var(--ac-juki);}
+  .c-juki .icon{background:#F6A6A2;}
+  .c-juki .title{color:var(--nm-juki);}
+  .c-juki .chips span{border-color:var(--ac-juki);color:var(--ac-juki);}
+  .c-juki .report{color:#5C413F;}
+  .c-juki .report .lbl{color:var(--ac-juki);}
+  /* アタッチ */
+  .c-att{background:var(--bg-att);border-color:var(--ac-att);}
+  .c-att .icon{background:var(--ac-att);}
+  .c-att .title{color:var(--nm-att);}
+  .c-att .chips span{border-color:var(--ac-att);color:var(--ac-att);}
+  .c-att .report{color:#4C5645;}
+  .c-att .report .lbl{color:var(--ac-att);}
+  /* 役割トグル */
+  .duty-wrap{flex:0 0 auto;width:100%;max-width:1280px;margin:2.6vh auto 0;text-align:left;}
+  .duty-btn{display:flex;align-items:center;gap:10px;width:100%;justify-content:center;background:none;border:none;cursor:pointer;font-family:inherit;color:#6B6B62;font-weight:700;font-size:clamp(13px,1.3vw,17px);letter-spacing:.03em;padding:8px 4px;}
+  .duty-btn .chev{display:inline-block;transition:transform .2s ease;font-size:1.3em;line-height:1;}
+  .duty-btn[aria-expanded="true"] .chev{transform:rotate(180deg);}
+  .duty{display:none;margin-top:1.2vh;background:#fff;border:1px solid rgba(31,36,33,.10);border-left:5px solid var(--ac-juki);border-radius:14px;box-shadow:0 6px 16px rgba(31,36,33,.08);padding:2.4vh 2.4vw;}
+  .duty.open{display:block;}
+  .duty-grid{display:grid;grid-template-columns:1fr 1fr;gap:1vh 2.4vw;}
+  .duty-grid .h{margin:0 0 4px;font-weight:700;font-size:clamp(13px,1.25vw,17px);color:var(--nm-juki);}
+  .duty-grid .b{margin:0;font-weight:400;font-size:clamp(12px,1.15vw,15px);line-height:1.6;color:#4A4F4B;}
+  .duty .foot{margin:1.6vh 0 0;padding-top:1.2vh;border-top:1px solid rgba(31,36,33,.10);font-weight:500;font-size:clamp(11px,1.05vw,14px);color:#9A968C;}
+  @media (max-width:680px), (max-height:560px){
+    .root{padding:16px 12px;min-height:100dvh;justify-content:safe center;}
+    .head{padding-bottom:44px;padding-top:0;margin-top:-18px;}
+    .head h1{font-size:21px;}
+    .grid{flex:0 0 auto;gap:12px;max-width:100%;max-height:none;padding:0;}
+    .card{padding:14px 8px;border-radius:16px;box-shadow:0 6px 16px rgba(31,36,33,.18);}
+    .icon{width:76px;height:76px;}
+    .title{font-size:17px;height:auto;margin-top:10px;line-height:1.2;}
+    .chips{margin-top:8px;gap:5px;flex-wrap:wrap;}
+    .chips span{font-size:11px;padding:3px 7px;border-width:1.5px;}
+    .report{font-size:11.5px;min-height:0;margin-top:10px;padding-top:9px;}
+    .duty{margin-top:16px;padding:14px 14px;border-radius:12px;}
+    .duty-grid{grid-template-columns:1fr;gap:12px;}
+    .duty-grid .b{font-size:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="root">
+
+  <header class="head">
+    <h1>どちらを報告しますか？</h1>
+  </header>
+
+  <div class="grid">
+
+    <a class="card c-juki" data-band href="https://kikuken-pages45451588454332.notion.site/3893c51f6fc6807db5c0f82a6d8d45c2?pvs=105" target="_self">
+      <div class="icon">
+        <svg viewBox="5 17 90 90" width="86%" height="86%" fill="url(#jukiDots)">
+          <defs>
+            <pattern id="jukiDots" patternUnits="userSpaceOnUse" width="22" height="22">
+              <rect width="22" height="22" fill="#FF2E88"/>
+              <circle cx="6" cy="6" r="4" fill="#fff"/>
+              <circle cx="17" cy="17" r="4" fill="#fff"/>
+            </pattern>
+          </defs>
+          <rect x="6" y="76" width="62" height="16" rx="8" fill="#33282A"/>
+          <circle cx="16" cy="84" r="3.4" fill="#fff"/>
+          <circle cx="37" cy="84" r="3.4" fill="#fff"/>
+          <circle cx="58" cy="84" r="3.4" fill="#fff"/>
+          <path d="M10 58 q-3 0 -3 4 v10 q0 2 2 2 h8 v-16 z"/>
+          <rect x="16" y="54" width="40" height="20" rx="3"/>
+          <path d="M30 40 h16 q4 0 4 4 v10 H26 v-8 q0 -6 4 -6 z"/>
+          <rect x="30" y="44" width="16" height="8" rx="1.5" fill="var(--ac-juki)"/>
+          <rect x="20" y="48" width="4" height="7" rx="1"/>
+          <path d="M50 56 L72 34 l8 7 l-20 24 z"/>
+          <circle cx="51" cy="57" r="3.4" fill="var(--ac-juki)"/>
+          <path d="M76 34 l13 20 l-8 5 l-13 -19 z"/>
+          <path d="M84 56 q12 2 11 14 l-16 -1 q-2 -9 5 -13 z" fill="#fff"/>
+          <path d="M80 69 l15 1 l-1 4 l-13 -1 z" fill="#33282A"/>
+        </svg>
+        <div class="bandaid">
+          <svg viewBox="0 0 120 42" width="100%" height="auto" style="display:block;">
+            <rect x="2" y="7" width="116" height="28" rx="14" fill="#EBB089"/>
+            <rect x="43" y="10" width="34" height="22" rx="5" fill="#FBE7D4"/>
+            <g fill="rgba(255,255,255,.6)">
+              <circle cx="14" cy="14" r="1.5"/><circle cx="22" cy="14" r="1.5"/><circle cx="14" cy="21" r="1.5"/><circle cx="22" cy="21" r="1.5"/><circle cx="14" cy="28" r="1.5"/><circle cx="22" cy="28" r="1.5"/>
+              <circle cx="98" cy="14" r="1.5"/><circle cx="106" cy="14" r="1.5"/><circle cx="98" cy="21" r="1.5"/><circle cx="106" cy="21" r="1.5"/><circle cx="98" cy="28" r="1.5"/><circle cx="106" cy="28" r="1.5"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="title">重機<br>故障対応報告</div>
+      <div class="chips"><span>故障</span><span>修理</span><span>復旧</span></div>
+      <div class="report"><span class="lbl">報告対象</span>全重機</div>
+    </a>
+
+    <a class="card c-att" data-band href="https://kikuken-pages45451588454332.notion.site/38b3c51f6fc680dd9851e85a6ae5db33?pvs=105" target="_self">
+      <div class="icon">
+        <svg viewBox="0 0 100 100" width="74%" height="74%" fill="currentColor">
+          <path d="M42 9 q8 -5 16 0" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+          <rect x="40" y="7" width="4" height="7" rx="1.5"/>
+          <rect x="56" y="7" width="4" height="7" rx="1.5"/>
+          <ellipse cx="50" cy="22" rx="19" ry="8.5"/>
+          <circle cx="50" cy="22" r="4.6" fill="var(--bg-att)"/>
+          <rect x="38" y="27" width="24" height="26" rx="4"/>
+          <circle cx="44" cy="33" r="1.7" fill="var(--bg-att)"/>
+          <circle cx="56" cy="33" r="1.7" fill="var(--bg-att)"/>
+          <circle cx="50" cy="48" r="2.4" fill="var(--bg-att)"/>
+          <rect x="22.5" y="29" width="11" height="22" rx="5.5" transform="rotate(12 28 40)"/>
+          <rect x="66.5" y="29" width="11" height="22" rx="5.5" transform="rotate(-12 72 40)"/>
+          <path d="M40 52 C32 54 21 59 18 70 C16 78 20.5 87 28 88 C34 89 40 85 41 78 C37 81 30.5 79 29.5 71.5 C28.5 64 33 59 41 55.5 Z"/>
+          <path d="M60 52 C68 54 79 59 82 70 C84 78 79.5 87 72 88 C66 89 60 85 59 78 C63 81 69.5 79 70.5 71.5 C71.5 64 67 59 59 55.5 Z"/>
+          <ellipse cx="28" cy="71" rx="3.1" ry="7.5" transform="rotate(-20 28 71)" fill="var(--bg-att)"/>
+          <ellipse cx="72" cy="71" rx="3.1" ry="7.5" transform="rotate(20 72 71)" fill="var(--bg-att)"/>
+          <path d="M35 63 l5.5 2 l-5.5 2 z" fill="var(--bg-att)"/>
+          <path d="M65 63 l-5.5 2 l5.5 2 z" fill="var(--bg-att)"/>
+          <path d="M31 74 l5.5 1.8 l-5.5 1.8 z" fill="var(--bg-att)"/>
+          <path d="M69 74 l-5.5 1.8 l5.5 1.8 z" fill="var(--bg-att)"/>
+        </svg>
+        <div class="bandaid">
+          <svg viewBox="0 0 120 42" width="100%" height="auto" style="display:block;">
+            <rect x="2" y="7" width="116" height="28" rx="14" fill="#EBB089"/>
+            <rect x="43" y="10" width="34" height="22" rx="5" fill="#FBE7D4"/>
+            <g fill="rgba(255,255,255,.6)">
+              <circle cx="14" cy="14" r="1.5"/><circle cx="22" cy="14" r="1.5"/><circle cx="14" cy="21" r="1.5"/><circle cx="22" cy="21" r="1.5"/><circle cx="14" cy="28" r="1.5"/><circle cx="22" cy="28" r="1.5"/>
+              <circle cx="98" cy="14" r="1.5"/><circle cx="106" cy="14" r="1.5"/><circle cx="98" cy="21" r="1.5"/><circle cx="106" cy="21" r="1.5"/><circle cx="98" cy="28" r="1.5"/><circle cx="106" cy="28" r="1.5"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="title">アタッチメント<br>故障対応報告</div>
+      <div class="chips"><span>故障</span><span>修理</span><span>復旧</span></div>
+      <div class="report"><span class="lbl">報告対象</span>全アタッチメント</div>
+    </a>
+
+  </div>
+
+  <div class="duty-wrap">
+    <button type="button" class="duty-btn" aria-expanded="false" id="dutyBtn">
+      <span>重機管理統括責任者の役割</span>
+      <span class="chev">⌄</span>
+    </button>
+    <section class="duty" id="dutyPanel">
+      <div class="duty-grid">
+        <div>
+          <p class="h">故障・対応の報告</p>
+          <p class="b">全重機・全アタッチメントの故障／修理／復旧を、発見した当日中に上のフォームで報告し、稼働状況（台帳）を常に最新に保つ。<br><span style="color:#7A766C;">※各現場の重機オペレーターから故障の連絡を受けた場合は、その内容を当日中にフォームで報告する。</span></p>
+        </div>
+        <div>
+          <p class="h">修理手配・進捗管理</p>
+          <p class="b">故障した重機・アタッチメントの修理手配・業者連絡・進捗フォローを行う。</p>
+        </div>
+      </div>
+      <p class="foot">いつ・誰が報告したかはシステムに記録されます。</p>
+    </section>
+  </div>
+
+</div>
+
+<script>
+  // 押した瞬間に絆創膏を貼ってから遷移
+  document.querySelectorAll('.card[data-band]').forEach(function(card){
+    card.addEventListener('click', function(e){
+      if (card.classList.contains('applied')) return;
+      e.preventDefault();
+      card.classList.add('applied');
+      var href = card.getAttribute('href');
+      setTimeout(function(){ window.location.href = href; }, 620);
+    });
+  });
+  // 役割トグル
+  var btn = document.getElementById('dutyBtn');
+  var panel = document.getElementById('dutyPanel');
+  btn.addEventListener('click', function(){
+    var open = panel.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+</script>
+</body>
+</html>
