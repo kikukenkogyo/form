@@ -41,12 +41,16 @@
   .c-niku .report .lbl{color:var(--ac-niku);}
 
   a.card,a.btn{pointer-events:none!important;cursor:default!important;}
-  .sample-badge{position:fixed;top:14px;right:-42px;z-index:9999;background:#D33A33;color:#fff;
+  .sample-badge{position:absolute;top:14px;right:-42px;z-index:9999;background:#D33A33;color:#fff;
     font-weight:900;font-size:15px;letter-spacing:3px;padding:7px 52px;transform:rotate(35deg);
     box-shadow:0 3px 8px rgba(0,0,0,.25);pointer-events:none;}
+  html,body{margin:0;padding:0;overflow:hidden;background:#EDEBE6;}
+  #stage{position:relative;width:1280px;transform-origin:top left;overflow:hidden;}
+  #stage .root{width:1280px;height:800px;min-height:800px!important;}
 </style>
 </head>
 <body>
+<div id="stage">
 <div class="sample-badge">画面見本</div>
 <div class="root">
 
@@ -116,5 +120,11 @@
   </div>
 
 </div>
+</div>
+<script>
+function fit(){var st=document.getElementById('stage');var s=Math.min(1,window.innerWidth/1280);
+st.style.transform='scale('+s+')';document.body.style.height=st.getBoundingClientRect().height+'px';}
+window.addEventListener('resize',fit);fit();
+</script>
 </body>
 </html>
