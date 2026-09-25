@@ -1,0 +1,441 @@
+<title>重機・アタッチメント 報告フロー図</title>
+<style>
+  :root{
+    --ground:#e9ebee; --paper:#ffffff; --ink:#22262d; --muted:#5b6472; --line:#d4d8de;
+    --juki:#155e9e;    --juki-bg:#e7f1fa;
+    --honin:#1f7a4d;   --honin-bg:#e6f4ec;
+    --factory:#b35c05; --factory-bg:#fbf0de;
+    --auto:#5f6673;    --auto-bg:#eff1f4;
+    --admin:#6d4fa1;   --admin-bg:#efe9f8;
+  }
+  @media (prefers-color-scheme: dark){ :root{ --ground:#191b1f; } }
+  :root[data-theme="dark"]{ --ground:#191b1f; }
+  :root[data-theme="light"]{ --ground:#e9ebee; }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  body{ margin:0; background:var(--ground); font-family:"Yu Gothic UI","Hiragino Sans","Meiryo",sans-serif; color:var(--ink); }
+  .scroller{ overflow-x:auto; padding:18px 10px 30px; }
+  .sheet{ background:var(--paper); width:1400px; min-width:1400px; margin:0 auto; padding:16px 22px 12px;
+          box-shadow:0 3px 18px rgba(0,0,0,.18); border-radius:4px; }
+
+  /* ===== ヘッダー ===== */
+  .head{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px;
+         border-bottom:2.5px solid var(--ink); padding-bottom:8px; }
+  .head h1{ margin:0; font-size:22px; letter-spacing:.04em; }
+  .head .sub{ margin:3px 0 0; font-size:11.5px; color:var(--muted); letter-spacing:.06em; }
+  .legend{ border:1px solid var(--line); border-radius:6px; padding:6px 12px; flex:none; }
+  .legend .cap{ font-size:10px; font-weight:700; letter-spacing:.14em; color:var(--muted); margin-bottom:4px; }
+  .legend ul{ list-style:none; margin:0; padding:0; display:flex; gap:12px; }
+  .legend li{ font-size:11.5px; font-weight:700; display:flex; align-items:center; gap:5px; white-space:nowrap; }
+  .sw{ width:12px; height:12px; border-radius:3px; flex:none; }
+
+  /* ===== 最重要ルール ===== */
+  .alert{ margin-top:10px; border:2px solid #c0392b; background:#fdeeec; border-radius:8px;
+          padding:8px 14px; display:flex; align-items:center; gap:14px; }
+  .alert .badge{ flex:none; background:#c0392b; color:#fff; font-size:12px; font-weight:700;
+                 letter-spacing:.14em; border-radius:6px; padding:5px 10px; }
+  .alert .main{ font-size:15.5px; font-weight:700; line-height:1.45; color:#7c1d12; }
+  .alert .main u{ text-decoration-thickness:2.5px; text-underline-offset:3px; }
+  .alert .sub{ font-size:11px; color:#8a4a41; margin-top:2px; line-height:1.5; }
+
+  /* ===== レーン ===== */
+  .lanes{ margin-top:10px; border:1.5px solid var(--ink); border-radius:6px; overflow:hidden; }
+  .lane{ display:grid; grid-template-columns:150px 1fr; border-bottom:1.5px solid var(--ink); }
+  .lane:last-child{ border-bottom:none; }
+  .lane-label{ padding:9px 11px; border-right:1.5px solid var(--ink); display:flex; flex-direction:column; gap:4px; justify-content:center; }
+  .scene{ font-size:9.5px; font-weight:700; letter-spacing:.18em; color:var(--muted); }
+  .lane-label h2{ margin:0; font-size:13.5px; line-height:1.4; }
+  .obj{ align-self:flex-start; font-size:9.5px; font-weight:700; padding:1px 7px; border-radius:99px; border:1px solid var(--line); color:var(--muted); }
+
+  .flow{ display:flex; align-items:stretch; gap:0; padding:8px 10px; }
+  .step{ flex:1 1 0; min-width:0; border:1.6px solid var(--c,var(--line)); border-radius:8px; background:#fff;
+         display:flex; flex-direction:column; overflow:hidden; }
+  .step .who{ background:var(--c); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:.05em; padding:3px 8px; }
+  .step .body{ padding:6px 9px 7px; background:var(--bg,#fff); flex:1; }
+  .step .act{ font-size:13.5px; font-weight:700; line-height:1.35; }
+  .step .note{ font-size:10.5px; color:var(--muted); margin-top:3px; line-height:1.5; }
+  .step.ghost{ border-style:dashed; }
+  .step.ghost .body{ display:flex; align-items:center; justify-content:center; text-align:center; }
+  .step.ghost .act{ color:var(--muted); font-size:12px; font-weight:700; }
+
+  .arr{ flex:none; width:20px; display:flex; align-items:center; justify-content:center; }
+  .arr::before{ content:""; border-left:9px solid #9aa1ab; border-top:7px solid transparent; border-bottom:7px solid transparent; }
+
+  .formchip{ flex:none; align-self:center; margin-left:10px; width:136px; font-size:10px; color:var(--muted);
+             border:1px dashed var(--line); border-radius:6px; padding:7px 8px 6px; line-height:1.5; text-align:center; }
+  .formchip b{ color:var(--ink); font-size:10.5px; }
+  .fc-icon{ position:relative; width:44px; height:44px; border-radius:50%; margin:0 auto 5px; color:#fff;
+            display:flex; align-items:center; justify-content:center; }
+  .fc-icon svg{ display:block; }
+  .fc-juki{ background:#F6A6A2; --ac-juki:#D33A33; }
+  .fc-att{ background:#1F9E54; --bg-att:#E2F6E9; }
+  .fc-niku{ background:#F47A1F; --bg-niku:#FFEEDD; }
+  .fc-band{ position:absolute; left:50%; top:50%; width:80%;
+            transform:translate(-50%,-50%) rotate(28deg); filter:drop-shadow(0 1px 2px rgba(0,0,0,.25)); }
+
+  /* ===== 共通の流れ・注意 ===== */
+  .after{ margin-top:10px; display:grid; grid-template-columns:1fr 20px 1fr 340px; gap:0; align-items:stretch; }
+  .after .step{ flex:none; }
+  .after .admin{ margin-left:10px; }
+  .rules{ margin-top:10px; border:1.5px solid var(--line); border-radius:6px; padding:7px 12px; }
+  .rules .cap{ font-size:10.5px; font-weight:700; letter-spacing:.14em; margin-bottom:4px; }
+  .rules ul{ margin:0; padding:0; list-style:none; display:flex; gap:16px; flex-wrap:wrap; }
+  .rules li{ font-size:11px; line-height:1.5; padding-left:12px; position:relative; }
+  .rules li::before{ content:""; position:absolute; left:0; top:.5em; width:6px; height:6px; border-radius:99px; background:var(--ink); }
+  .foot{ margin-top:6px; display:flex; justify-content:space-between; font-size:9.5px; color:var(--muted); letter-spacing:.06em; }
+
+  /* ===== 印刷（A3横） ===== */
+  @page{ size:A3 landscape; margin:5mm; }
+  @media print{
+    body{ background:#fff; }
+    .scroller{ padding:0; overflow:visible; }
+    .sheet{ box-shadow:none; border-radius:0; width:100%; min-width:0; }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+
+<div class="scroller"><div class="sheet">
+
+  <header class="head">
+    <div>
+      <h1>重機・アタッチメント 報告フロー図</h1>
+      <p class="sub">誰が・いつ・何を報告するか ― 箱の上の色帯が「報告する人」です</p>
+    </div>
+    <div class="legend">
+      <div class="cap">色 ＝ 報告する人</div>
+      <ul>
+        <li><span class="sw" style="background:var(--juki)"></span>重機管理統括責任者</li>
+        <li><span class="sw" style="background:var(--honin)"></span>持ち出す・戻す本人</li>
+        <li><span class="sw" style="background:var(--factory)"></span>工場</li>
+        <li><span class="sw" style="background:var(--auto)"></span>報告不要（自動）</li>
+        <li><span class="sw" style="background:var(--admin)"></span>管理者</li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="alert">
+    <div class="badge">最重要</div>
+    <div>
+      <div class="main">重機・アタッチメントが故障したら、気づいた人は <u>必ず</u> 重機管理統括責任者へ報告（<b>写真付き</b>）</div>
+      <div class="sub">集まった報告は重機管理統括責任者がとりまとめて、フォームで報告します（下の 場面1・場面2 の流れ）</div>
+    </div>
+  </div>
+
+  <div class="lanes">
+
+    <!-- 場面1 重機の故障 -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 1</span>
+        <h2>重機が故障・不調に<br>なったら</h2>
+        <span class="obj">対象：重機（本体）</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--juki); --bg:var(--juki-bg)">
+          <div class="who">重機管理統括責任者</div>
+          <div class="body"><div class="act">「故障発生」を報告</div>
+            <div class="note">気づいた人からの報告（写真付き）をとりまとめて送信。軽症なら「様子見」でも報告</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--juki); --bg:var(--juki-bg)">
+          <div class="who">重機管理統括責任者</div>
+          <div class="body"><div class="act">「修理依頼」を報告</div>
+            <div class="note">業者へ手配したとき</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--juki); --bg:var(--juki-bg)">
+          <div class="who">重機管理統括責任者</div>
+          <div class="body"><div class="act">「修理中」を報告</div>
+            <div class="note">修理が始まったとき</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--juki); --bg:var(--juki-bg)">
+          <div class="who">重機管理統括責任者</div>
+          <div class="body"><div class="act">「復旧完了」を報告</div>
+            <div class="note">直って使える状態に戻ったとき</div></div>
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-juki">
+            <svg viewBox="5 17 90 90" width="86%" height="86%" fill="url(#jukiDots)">
+              <defs>
+                <pattern id="jukiDots" patternUnits="userSpaceOnUse" width="22" height="22">
+                  <rect width="22" height="22" fill="#FF2E88"/>
+                  <circle cx="6" cy="6" r="4" fill="#fff"/>
+                  <circle cx="17" cy="17" r="4" fill="#fff"/>
+                </pattern>
+              </defs>
+              <rect x="6" y="76" width="62" height="16" rx="8" fill="#33282A"/>
+              <circle cx="16" cy="84" r="3.4" fill="#fff"/>
+              <circle cx="37" cy="84" r="3.4" fill="#fff"/>
+              <circle cx="58" cy="84" r="3.4" fill="#fff"/>
+              <path d="M10 58 q-3 0 -3 4 v10 q0 2 2 2 h8 v-16 z"/>
+              <rect x="16" y="54" width="40" height="20" rx="3"/>
+              <path d="M30 40 h16 q4 0 4 4 v10 H26 v-8 q0 -6 4 -6 z"/>
+              <rect x="30" y="44" width="16" height="8" rx="1.5" fill="var(--ac-juki)"/>
+              <rect x="20" y="48" width="4" height="7" rx="1"/>
+              <path d="M50 56 L72 34 l8 7 l-20 24 z"/>
+              <circle cx="51" cy="57" r="3.4" fill="var(--ac-juki)"/>
+              <path d="M76 34 l13 20 l-8 5 l-13 -19 z"/>
+              <path d="M84 56 q12 2 11 14 l-16 -1 q-2 -9 5 -13 z" fill="#fff"/>
+              <path d="M80 69 l15 1 l-1 4 l-13 -1 z" fill="#33282A"/>
+            </svg>
+            <svg class="fc-band" viewBox="0 0 120 42">
+              <rect x="2" y="7" width="116" height="28" rx="14" fill="#EBB089"/>
+              <rect x="43" y="10" width="34" height="22" rx="5" fill="#FBE7D4"/>
+              <g fill="rgba(255,255,255,.6)">
+                <circle cx="14" cy="14" r="1.5"/><circle cx="22" cy="14" r="1.5"/><circle cx="14" cy="21" r="1.5"/><circle cx="22" cy="21" r="1.5"/><circle cx="14" cy="28" r="1.5"/><circle cx="22" cy="28" r="1.5"/>
+                <circle cx="98" cy="14" r="1.5"/><circle cx="106" cy="14" r="1.5"/><circle cx="98" cy="21" r="1.5"/><circle cx="106" cy="21" r="1.5"/><circle cx="98" cy="28" r="1.5"/><circle cx="106" cy="28" r="1.5"/>
+              </g>
+            </svg>
+          </span>
+          <b>使うフォーム</b><br>「重機 故障対応報告」<br>（スマホから）
+        </div>
+      </div>
+    </section>
+
+    <!-- 場面2 アタッチメントの故障 -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 2</span>
+        <h2>アタッチメントが<br>故障・不調になったら</h2>
+        <span class="obj">対象：アタッチメント</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--juki); --bg:var(--juki-bg)">
+          <div class="who">重機管理統括責任者</div>
+          <div class="body"><div class="act">「要観察」か「故障（使用不可）」を報告</div>
+            <div class="note">気づいた人からの報告（写真付き）をとりまとめて送信。使えるが心配＝要観察／使えない＝故障</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--juki); --bg:var(--juki-bg)">
+          <div class="who">重機管理統括責任者</div>
+          <div class="body"><div class="act">「修理依頼中」を報告</div>
+            <div class="note">業者へ手配したとき</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--juki); --bg:var(--juki-bg)">
+          <div class="who">重機管理統括責任者</div>
+          <div class="body"><div class="act">「修理中」を報告</div>
+            <div class="note">修理が始まったとき</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--juki); --bg:var(--juki-bg)">
+          <div class="who">重機管理統括責任者</div>
+          <div class="body"><div class="act">「復旧完了」を報告</div>
+            <div class="note">直って使える状態に戻ったとき</div></div>
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-att">
+            <svg viewBox="0 0 100 100" width="74%" height="74%" fill="currentColor">
+              <path d="M42 9 q8 -5 16 0" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+              <rect x="40" y="7" width="4" height="7" rx="1.5"/>
+              <rect x="56" y="7" width="4" height="7" rx="1.5"/>
+              <ellipse cx="50" cy="22" rx="19" ry="8.5"/>
+              <circle cx="50" cy="22" r="4.6" fill="var(--bg-att)"/>
+              <rect x="38" y="27" width="24" height="26" rx="4"/>
+              <circle cx="44" cy="33" r="1.7" fill="var(--bg-att)"/>
+              <circle cx="56" cy="33" r="1.7" fill="var(--bg-att)"/>
+              <circle cx="50" cy="48" r="2.4" fill="var(--bg-att)"/>
+              <rect x="22.5" y="29" width="11" height="22" rx="5.5" transform="rotate(12 28 40)"/>
+              <rect x="66.5" y="29" width="11" height="22" rx="5.5" transform="rotate(-12 72 40)"/>
+              <path d="M40 52 C32 54 21 59 18 70 C16 78 20.5 87 28 88 C34 89 40 85 41 78 C37 81 30.5 79 29.5 71.5 C28.5 64 33 59 41 55.5 Z"/>
+              <path d="M60 52 C68 54 79 59 82 70 C84 78 79.5 87 72 88 C66 89 60 85 59 78 C63 81 69.5 79 70.5 71.5 C71.5 64 67 59 59 55.5 Z"/>
+              <ellipse cx="28" cy="71" rx="3.1" ry="7.5" transform="rotate(-20 28 71)" fill="var(--bg-att)"/>
+              <ellipse cx="72" cy="71" rx="3.1" ry="7.5" transform="rotate(20 72 71)" fill="var(--bg-att)"/>
+              <path d="M35 63 l5.5 2 l-5.5 2 z" fill="var(--bg-att)"/>
+              <path d="M65 63 l-5.5 2 l5.5 2 z" fill="var(--bg-att)"/>
+              <path d="M31 74 l5.5 1.8 l-5.5 1.8 z" fill="var(--bg-att)"/>
+              <path d="M69 74 l-5.5 1.8 l5.5 1.8 z" fill="var(--bg-att)"/>
+            </svg>
+            <svg class="fc-band" viewBox="0 0 120 42">
+              <rect x="2" y="7" width="116" height="28" rx="14" fill="#EBB089"/>
+              <rect x="43" y="10" width="34" height="22" rx="5" fill="#FBE7D4"/>
+              <g fill="rgba(255,255,255,.6)">
+                <circle cx="14" cy="14" r="1.5"/><circle cx="22" cy="14" r="1.5"/><circle cx="14" cy="21" r="1.5"/><circle cx="22" cy="21" r="1.5"/><circle cx="14" cy="28" r="1.5"/><circle cx="22" cy="28" r="1.5"/>
+                <circle cx="98" cy="14" r="1.5"/><circle cx="106" cy="14" r="1.5"/><circle cx="98" cy="21" r="1.5"/><circle cx="106" cy="21" r="1.5"/><circle cx="98" cy="28" r="1.5"/><circle cx="106" cy="28" r="1.5"/>
+              </g>
+            </svg>
+          </span>
+          <b>使うフォーム</b><br>「アタッチメント 故障対応報告」<br>（スマホから）
+        </div>
+      </div>
+    </section>
+
+    <!-- 場面3 肉盛り -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 3</span>
+        <h2>アタッチメントの<br>刃先が減ったら<br>（肉盛り）</h2>
+        <span class="obj">対象：アタッチメント</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--honin); --bg:var(--honin-bg)">
+          <div class="who">持ち出す・戻す本人</div>
+          <div class="body"><div class="act">「要肉盛り」を報告</div>
+            <div class="note">爪先の減りに気づいたとき、使った本人がその場で報告</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--factory); --bg:var(--factory-bg)">
+          <div class="who">工場</div>
+          <div class="body"><div class="act">「肉盛り完了」を報告 ＋ 実施日を入力</div>
+            <div class="note">工場のタブレットから。実施日を入れると台帳の「前回肉盛り実施日」が更新され、刃先表示はOK（空欄）に戻る</div></div>
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-att">
+            <svg viewBox="0 0 100 100" width="74%" height="74%" fill="currentColor">
+              <path d="M42 9 q8 -5 16 0" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+              <rect x="40" y="7" width="4" height="7" rx="1.5"/>
+              <rect x="56" y="7" width="4" height="7" rx="1.5"/>
+              <ellipse cx="50" cy="22" rx="19" ry="8.5"/>
+              <circle cx="50" cy="22" r="4.6" fill="var(--bg-att)"/>
+              <rect x="38" y="27" width="24" height="26" rx="4"/>
+              <circle cx="44" cy="33" r="1.7" fill="var(--bg-att)"/>
+              <circle cx="56" cy="33" r="1.7" fill="var(--bg-att)"/>
+              <circle cx="50" cy="48" r="2.4" fill="var(--bg-att)"/>
+              <rect x="22.5" y="29" width="11" height="22" rx="5.5" transform="rotate(12 28 40)"/>
+              <rect x="66.5" y="29" width="11" height="22" rx="5.5" transform="rotate(-12 72 40)"/>
+              <path d="M40 52 C32 54 21 59 18 70 C16 78 20.5 87 28 88 C34 89 40 85 41 78 C37 81 30.5 79 29.5 71.5 C28.5 64 33 59 41 55.5 Z"/>
+              <path d="M60 52 C68 54 79 59 82 70 C84 78 79.5 87 72 88 C66 89 60 85 59 78 C63 81 69.5 79 70.5 71.5 C71.5 64 67 59 59 55.5 Z"/>
+              <ellipse cx="28" cy="71" rx="3.1" ry="7.5" transform="rotate(-20 28 71)" fill="var(--bg-att)"/>
+              <ellipse cx="72" cy="71" rx="3.1" ry="7.5" transform="rotate(20 72 71)" fill="var(--bg-att)"/>
+              <path d="M35 63 l5.5 2 l-5.5 2 z" fill="var(--bg-att)"/>
+              <path d="M65 63 l-5.5 2 l5.5 2 z" fill="var(--bg-att)"/>
+              <path d="M31 74 l5.5 1.8 l-5.5 1.8 z" fill="var(--bg-att)"/>
+              <path d="M69 74 l-5.5 1.8 l5.5 1.8 z" fill="var(--bg-att)"/>
+            </svg>
+          </span>
+          <b>「要肉盛り」の報告</b><br>「アタッチメント 持出・返却」<br>（置場・工場のタブレット）
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-niku">
+            <svg viewBox="0 0 100 100" width="74%" height="74%" fill="currentColor">
+              <rect x="14" y="74" width="72" height="12" rx="2"/>
+              <path d="M34 74 q16 -13 32 0 z"/>
+              <g transform="rotate(34 60 40)">
+                <rect x="52" y="12" width="14" height="34" rx="6"/>
+                <rect x="55" y="6" width="8" height="9" rx="2"/>
+                <rect x="50" y="44" width="18" height="7" rx="3"/>
+                <rect x="57" y="50" width="4" height="9"/>
+              </g>
+              <rect x="44" y="56" width="6" height="9" rx="2" transform="rotate(34 47 60)"/>
+              <g fill="var(--bg-niku)">
+                <path d="M50 60 l2.6 8 l-6.8 -3 l7.8 -1 l-4.6 6.4 z"/>
+                <circle cx="36" cy="66" r="2.6"/>
+                <circle cx="62" cy="64" r="2.3"/>
+                <circle cx="42" cy="55" r="1.9"/>
+                <circle cx="56" cy="70" r="1.9"/>
+                <circle cx="28" cy="60" r="1.6"/>
+              </g>
+            </svg>
+          </span>
+          <b>「肉盛り完了」の報告</b><br>「アタッチメント 肉盛り報告」<br>（工場のタブレット）
+        </div>
+      </div>
+    </section>
+
+    <!-- 場面4 持出・返却 -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 4</span>
+        <h2>アタッチメントを<br>現場へ出す・戻すとき</h2>
+        <span class="obj">対象：アタッチメント</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--honin); --bg:var(--honin-bg)">
+          <div class="who">持ち出す本人</div>
+          <div class="body"><div class="act">「持出」を報告（行き先の現場を選ぶ）</div>
+            <div class="note">置場・工場から出すときに、その場で報告</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step ghost">
+          <div class="body"><div class="act">現場で使用中</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--honin); --bg:var(--honin-bg)">
+          <div class="who">戻す本人</div>
+          <div class="body"><div class="act">「返却」を報告（工場へ／置場へ）</div>
+            <div class="note">戻した先を選ぶだけ。台帳の現在地が 🚧現場 → 🏭工場／🟢置場 に変わる</div></div>
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-att">
+            <svg viewBox="0 0 100 100" width="74%" height="74%" fill="currentColor">
+              <path d="M42 9 q8 -5 16 0" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+              <rect x="40" y="7" width="4" height="7" rx="1.5"/>
+              <rect x="56" y="7" width="4" height="7" rx="1.5"/>
+              <ellipse cx="50" cy="22" rx="19" ry="8.5"/>
+              <circle cx="50" cy="22" r="4.6" fill="var(--bg-att)"/>
+              <rect x="38" y="27" width="24" height="26" rx="4"/>
+              <circle cx="44" cy="33" r="1.7" fill="var(--bg-att)"/>
+              <circle cx="56" cy="33" r="1.7" fill="var(--bg-att)"/>
+              <circle cx="50" cy="48" r="2.4" fill="var(--bg-att)"/>
+              <rect x="22.5" y="29" width="11" height="22" rx="5.5" transform="rotate(12 28 40)"/>
+              <rect x="66.5" y="29" width="11" height="22" rx="5.5" transform="rotate(-12 72 40)"/>
+              <path d="M40 52 C32 54 21 59 18 70 C16 78 20.5 87 28 88 C34 89 40 85 41 78 C37 81 30.5 79 29.5 71.5 C28.5 64 33 59 41 55.5 Z"/>
+              <path d="M60 52 C68 54 79 59 82 70 C84 78 79.5 87 72 88 C66 89 60 85 59 78 C63 81 69.5 79 70.5 71.5 C71.5 64 67 59 59 55.5 Z"/>
+              <ellipse cx="28" cy="71" rx="3.1" ry="7.5" transform="rotate(-20 28 71)" fill="var(--bg-att)"/>
+              <ellipse cx="72" cy="71" rx="3.1" ry="7.5" transform="rotate(20 72 71)" fill="var(--bg-att)"/>
+              <path d="M35 63 l5.5 2 l-5.5 2 z" fill="var(--bg-att)"/>
+              <path d="M65 63 l-5.5 2 l5.5 2 z" fill="var(--bg-att)"/>
+              <path d="M31 74 l5.5 1.8 l-5.5 1.8 z" fill="var(--bg-att)"/>
+              <path d="M69 74 l-5.5 1.8 l5.5 1.8 z" fill="var(--bg-att)"/>
+            </svg>
+          </span>
+          <b>使うフォーム</b><br>「アタッチメント 持出・返却」<br>（置場・工場のタブレット）
+        </div>
+      </div>
+    </section>
+
+    <!-- 場面5 重機の移動 -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 5</span>
+        <h2>重機が現場へ<br>移動・回送されたとき</h2>
+        <span class="obj">対象：重機（本体）</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--auto); --bg:var(--auto-bg); flex:2.2">
+          <div class="who">報告不要（自動更新）</div>
+          <div class="body"><div class="act">誰も報告しなくてOK ― 日報から所在地が自動で更新されます</div>
+            <div class="note">日報の「使用重機」「回送重機」を毎日読み取って自動判定。回送で戻った場合は 0.45㎥以下→置き場／0.7㎥以上→アキコ。修理中の機械は「修理中」表示が優先</div></div>
+        </div>
+        <div class="formchip"><b>前提</b><br>日報に使用・回送重機が正しく記入されていること</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 報告のあと（共通） -->
+  <div class="after">
+    <div class="step" style="--c:var(--auto); --bg:var(--auto-bg)">
+      <div class="who">自動</div>
+      <div class="body"><div class="act">報告すると台帳がすぐ最新になる</div>
+        <div class="note">最新の報告が状態・現在地に反映（上書きではなく履歴として積み上がる）</div></div>
+    </div>
+    <div class="arr"></div>
+    <div class="step" style="--c:var(--auto); --bg:var(--auto-bg)">
+      <div class="who">全社員</div>
+      <div class="body"><div class="act">菊建ページでいつでも確認（報告は不要）</div>
+        <div class="note">在庫・所在・故障状況はスマホで閲覧のみ。菊建ページからは入力できません</div></div>
+    </div>
+    <div class="step admin" style="--c:var(--admin); --bg:var(--admin-bg)">
+      <div class="who">管理者</div>
+      <div class="body"><div class="act">台帳の「状態」欄の更新と、システム全体の管理</div>
+        <div class="note">報告ログを見て台帳を整える。フォームURLの配布は管理者から各管理者へ（LINEで）</div></div>
+    </div>
+  </div>
+
+  <div class="rules">
+    <div class="cap">覚えておくこと</div>
+    <ul>
+      <li>報告は「状況が変わったら、そのつど1件」。前の報告は書き換えず、新しく送るだけ</li>
+      <li>最新の報告がそのまま菊建ページに出る。迷ったら報告してOK（あとから訂正の1件を送れば直る）</li>
+      <li>フォームは配布されたURLとタブレットからだけ入力できる。URLは他の人に転送しない</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    <span>菊建興業 資機材管理システム</span>
+    <span>不明な点は 管理者まで</span>
+  </div>
+
+</div></div>

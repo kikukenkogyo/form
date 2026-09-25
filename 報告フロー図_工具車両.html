@@ -1,0 +1,499 @@
+<title>工具・ガス・運搬車両 報告フロー図</title>
+<style>
+  :root{
+    --ground:#e9ebee; --paper:#ffffff; --ink:#22262d; --muted:#5b6472; --line:#d4d8de;
+    --sha:#D99B06;     --sha-bg:#FFF3CC;
+    --honin:#1f7a4d;   --honin-bg:#e6f4ec;
+    --oki:#0c7285;     --oki-bg:#e3f1f4;
+    --auto:#5f6673;    --auto-bg:#eff1f4;
+    --admin:#6d4fa1;   --admin-bg:#efe9f8;
+  }
+  @media (prefers-color-scheme: dark){ :root{ --ground:#191b1f; } }
+  :root[data-theme="dark"]{ --ground:#191b1f; }
+  :root[data-theme="light"]{ --ground:#e9ebee; }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  body{ margin:0; background:var(--ground); font-family:"Yu Gothic UI","Hiragino Sans","Meiryo",sans-serif; color:var(--ink); }
+  .scroller{ overflow-x:auto; padding:18px 10px 30px; }
+  .sheet{ background:var(--paper); width:1400px; min-width:1400px; margin:0 auto; padding:16px 22px 12px;
+          box-shadow:0 3px 18px rgba(0,0,0,.18); border-radius:4px; }
+
+  /* ===== ヘッダー ===== */
+  .head{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px;
+         border-bottom:2.5px solid var(--ink); padding-bottom:8px; }
+  .head h1{ margin:0; font-size:22px; letter-spacing:.04em; }
+  .head .sub{ margin:3px 0 0; font-size:11.5px; color:var(--muted); letter-spacing:.06em; }
+  .legend{ border:1px solid var(--line); border-radius:6px; padding:6px 12px; flex:none; }
+  .legend .cap{ font-size:10px; font-weight:700; letter-spacing:.14em; color:var(--muted); margin-bottom:4px; }
+  .legend ul{ list-style:none; margin:0; padding:0; display:flex; gap:12px; }
+  .legend li{ font-size:11.5px; font-weight:700; display:flex; align-items:center; gap:5px; white-space:nowrap; }
+  .sw{ width:12px; height:12px; border-radius:3px; flex:none; }
+
+  /* ===== 最重要ルール ===== */
+  .alert{ margin-top:10px; border:2px solid #c0392b; background:#fdeeec; border-radius:8px;
+          padding:8px 14px; display:flex; align-items:center; gap:14px; }
+  .alert .badge{ flex:none; background:#c0392b; color:#fff; font-size:12px; font-weight:700;
+                 letter-spacing:.14em; border-radius:6px; padding:5px 10px; }
+  .alert .main{ font-size:15.5px; font-weight:700; line-height:1.45; color:#7c1d12; }
+  .alert .main u{ text-decoration-thickness:2.5px; text-underline-offset:3px; }
+  .alert .sub{ font-size:11px; color:#8a4a41; margin-top:2px; line-height:1.5; }
+
+  /* ===== レーン ===== */
+  .lanes{ margin-top:10px; border:1.5px solid var(--ink); border-radius:6px; overflow:hidden; }
+  .lane{ display:grid; grid-template-columns:150px 1fr; border-bottom:1.5px solid var(--ink); }
+  .lane:last-child{ border-bottom:none; }
+  .lane-label{ padding:9px 11px; border-right:1.5px solid var(--ink); display:flex; flex-direction:column; gap:4px; justify-content:center; }
+  .scene{ font-size:9.5px; font-weight:700; letter-spacing:.18em; color:var(--muted); }
+  .lane-label h2{ margin:0; font-size:13.5px; line-height:1.4; }
+  .obj{ align-self:flex-start; font-size:9.5px; font-weight:700; padding:1px 7px; border-radius:99px; border:1px solid var(--line); color:var(--muted); }
+
+  .flow{ display:flex; align-items:stretch; gap:0; padding:8px 10px; }
+  .step{ flex:1 1 0; min-width:0; border:1.6px solid var(--c,var(--line)); border-radius:8px; background:#fff;
+         display:flex; flex-direction:column; overflow:hidden; }
+  .step .who{ background:var(--c); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:.05em; padding:3px 8px; }
+  .step .body{ padding:6px 9px 7px; background:var(--bg,#fff); flex:1; }
+  .step .act{ font-size:13.5px; font-weight:700; line-height:1.35; }
+  .step .note{ font-size:10.5px; color:var(--muted); margin-top:3px; line-height:1.5; }
+  .step.ghost{ border-style:dashed; }
+  .step.ghost .body{ display:flex; align-items:center; justify-content:center; text-align:center; }
+  .step.ghost .act{ color:var(--muted); font-size:12px; font-weight:700; }
+
+  .arr{ flex:none; width:20px; display:flex; align-items:center; justify-content:center; }
+  .arr::before{ content:""; border-left:9px solid #9aa1ab; border-top:7px solid transparent; border-bottom:7px solid transparent; }
+
+  .formchip{ flex:none; align-self:center; margin-left:10px; width:136px; font-size:10px; color:var(--muted);
+             border:1px dashed var(--line); border-radius:6px; padding:7px 8px 6px; line-height:1.5; text-align:center; }
+  .formchip b{ display:block; color:var(--ink); font-size:10.5px; white-space:nowrap; }
+  .fc-icon{ position:relative; width:44px; height:44px; border-radius:50%; margin:0 2px 5px; color:#fff;
+            display:inline-flex; vertical-align:middle; align-items:center; justify-content:center; }
+  .fc-icon svg{ display:block; }
+  .fc-kogu{ background:#1D6FE0; --bg-kogu:#E3F0FF; }
+  .fc-gas{ background:#F47A1F; --bg-gas:#FFEEDD; }
+  .fc-sha{ background:#F7D566; }
+  .fc-band{ position:absolute; left:50%; top:50%; width:80%;
+            transform:translate(-50%,-50%) rotate(28deg); filter:drop-shadow(0 1px 2px rgba(0,0,0,.25)); }
+
+  /* ===== 共通の流れ・注意 ===== */
+  .after{ margin-top:10px; display:grid; grid-template-columns:1fr 20px 1fr 340px; gap:0; align-items:stretch; }
+  .after .step{ flex:none; }
+  .after .admin{ margin-left:10px; }
+  .rules{ margin-top:10px; border:1.5px solid var(--line); border-radius:6px; padding:7px 12px; }
+  .rules .cap{ font-size:10.5px; font-weight:700; letter-spacing:.14em; margin-bottom:4px; }
+  .rules ul{ margin:0; padding:0; list-style:none; display:flex; gap:14px; flex-wrap:wrap; }
+  .rules li{ font-size:11px; line-height:1.5; padding-left:12px; position:relative; }
+  .rules li::before{ content:""; position:absolute; left:0; top:.5em; width:6px; height:6px; border-radius:99px; background:var(--ink); }
+  .foot{ margin-top:6px; display:flex; justify-content:space-between; font-size:9.5px; color:var(--muted); letter-spacing:.06em; }
+
+  /* ===== 印刷（A3横） ===== */
+  @page{ size:A3 landscape; margin:5mm; }
+  @media print{
+    body{ background:#fff; }
+    .scroller{ padding:0; overflow:visible; }
+    .sheet{ box-shadow:none; border-radius:0; width:100%; min-width:0; }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+
+<div class="scroller"><div class="sheet">
+
+  <header class="head">
+    <div>
+      <h1>工具・ガス溶断器具類・運搬車両 報告フロー図</h1>
+      <p class="sub">誰が・いつ・何を報告するか ― 箱の上の色帯が「報告する人」です</p>
+    </div>
+    <div class="legend">
+      <div class="cap">色 ＝ 報告する人</div>
+      <ul>
+        <li><span class="sw" style="background:var(--honin)"></span>持ち出す・戻す本人</li>
+        <li><span class="sw" style="background:var(--oki)"></span>置場資材管理責任者</li>
+        <li><span class="sw" style="background:var(--sha)"></span>運搬車両管理責任者</li>
+        <li><span class="sw" style="background:var(--auto)"></span>報告不要（自動）</li>
+        <li><span class="sw" style="background:var(--admin)"></span>管理者</li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="alert">
+    <div class="badge">最重要</div>
+    <div>
+      <div class="main">運搬車両が故障したら、気づいた人は <u>必ず</u> 運搬車両管理責任者へ報告（<b>写真付き</b>）</div>
+      <div class="sub">集まった報告は運搬車両管理責任者がとりまとめて、フォームで報告します（下の 場面4 の流れ）</div>
+    </div>
+  </div>
+
+  <div class="lanes">
+
+    <!-- 場面1 工具の持出・返却 -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 1</span>
+        <h2>工具・ガス溶断器具類を<br>置場から出す・戻すとき</h2>
+        <span class="obj">対象：工具・ガス類</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--honin); --bg:var(--honin-bg)">
+          <div class="who">持ち出す本人</div>
+          <div class="body"><div class="act">「持出」を報告（対象・行き先の現場・名前）</div>
+            <div class="note">置場から出すときに、置場のタブレットでその場で報告</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step ghost">
+          <div class="body"><div class="act">現場で使用中</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--honin); --bg:var(--honin-bg)">
+          <div class="who">戻す本人</div>
+          <div class="body"><div class="act">「返却」を報告（対象・名前）</div>
+            <div class="note">置場へ戻したらその場で報告。台帳の現在地が自動で「置場」に戻る</div></div>
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-kogu">
+            <svg viewBox="0 0 100 100" width="86%" height="86%" fill="currentColor">
+              <g>
+                <rect x="27" y="11" width="46" height="3.4" rx="1.7"/>
+                <rect x="31" y="13" width="3" height="6"/>
+                <rect x="66" y="13" width="3" height="6"/>
+                <rect x="35" y="15" width="30" height="9" rx="4"/>
+                <rect x="30" y="22" width="40" height="17" rx="4"/>
+                <circle cx="40" cy="30.5" r="4.3" fill="var(--bg-kogu)"/>
+                <circle cx="40" cy="30.5" r="1.4"/>
+                <rect x="49" y="26.5" width="16" height="9" rx="1.5" fill="var(--bg-kogu)"/>
+                <rect x="51.5" y="29" width="3.2" height="4" rx=".5"/>
+                <rect x="56.5" y="29" width="3.2" height="4" rx=".5"/>
+                <rect x="61" y="29.5" width="2.2" height="3.2" rx=".5"/>
+                <rect x="33" y="39" width="5" height="4.5"/>
+                <rect x="62" y="39" width="5" height="4.5"/>
+              </g>
+              <g transform="translate(27 67) rotate(-28)">
+                <rect x="-12" y="-7" width="19" height="14" rx="7"/>
+                <rect x="-14.5" y="-4" width="3" height="8" rx="1.5"/>
+                <rect x="7" y="-4.5" width="4.5" height="9" rx="2"/>
+                <rect x="11.5" y="-1.6" width="11" height="3.2" rx="1"/>
+                <path d="M-6 7 L4 7 L1.8 21 L-4.5 21 Z"/>
+                <rect x="-6.5" y="19" width="11" height="5.5" rx="2"/>
+                <rect x="1.5" y="8" width="3" height="4.5" rx="1" fill="var(--bg-kogu)"/>
+              </g>
+              <g transform="translate(73 67) rotate(208)">
+                <ellipse cx="-13" cy="0" rx="6.5" ry="6"/>
+                <ellipse cx="-13" cy="0" rx="3.2" ry="3" fill="var(--bg-kogu)"/>
+                <rect x="-8" y="-3" width="6" height="6" rx="2"/>
+                <rect x="-7" y="-7" width="18" height="14" rx="6"/>
+                <rect x="11" y="-5" width="3" height="10" rx="1"/>
+                <rect x="14" y="-1.5" width="11" height="2.8" rx="1"/>
+                <path d="M15 1.3 l1.8 2.6 l1.8 -2.6 z M18.6 1.3 l1.8 2.6 l1.8 -2.6 z M22.2 1.3 l1.8 2.6 l1.8 -2.6 z" fill="currentColor"/>
+              </g>
+            </svg>
+          </span>
+          <span class="fc-icon fc-gas">
+            <svg viewBox="0 0 100 100" width="76%" height="76%" fill="currentColor">
+              <path d="M16 34 q7 -14 14 0 v50 q0 5 -5 5 h-4 q-5 0 -5 -5 z"/>
+              <rect x="20" y="22" width="6" height="12" rx="2"/>
+              <rect x="15" y="50" width="16" height="4" fill="var(--bg-gas)"/>
+              <path d="M34 48 q6.5 -13 13 0 v36 q0 5 -5 5 h-3 q-5 0 -5 -5 z"/>
+              <rect x="37.5" y="38" width="6" height="10" rx="2"/>
+              <rect x="33" y="60" width="15" height="3.6" fill="var(--bg-gas)"/>
+              <g transform="translate(36 24) rotate(35)" fill="currentColor">
+                <rect x="2.5" y="-6" width="9" height="9" rx="2"/>
+                <path d="M4.5 -6 L9.5 -6 L7 -16 Z"/>
+                <rect x="10" y="-3.4" width="30" height="2.2" rx="1.1"/>
+                <rect x="10" y="0.6" width="30" height="2.2" rx="1.1"/>
+                <rect x="22" y="-7.4" width="14" height="2.6" rx="1.3"/>
+                <rect x="40" y="-5" width="8" height="12" rx="2.5"/>
+                <rect x="48" y="-3.6" width="16" height="8.4" rx="4.2"/>
+                <circle cx="44" cy="10" r="3.1"/>
+                <circle cx="53" cy="9.6" r="3.1"/>
+                <circle cx="44" cy="10" r="1.1" fill="var(--bg-gas)"/>
+                <circle cx="53" cy="9.6" r="1.1" fill="var(--bg-gas)"/>
+                <rect x="64" y="-2.4" width="7" height="2.8" rx="1.4"/>
+                <rect x="64" y="2" width="7" height="2.8" rx="1.4"/>
+              </g>
+            </svg>
+          </span>
+          <b>使うフォーム</b>「工具」「ガス溶断器具類」<br>の持出・返却（置場のタブレット）
+        </div>
+      </div>
+    </section>
+
+    <!-- 場面2 工具の故障 -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 2</span>
+        <h2>工具・ガス溶断器具類の<br>故障・不調に気づいたら</h2>
+        <span class="obj">対象：工具・ガス類</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--honin); --bg:var(--honin-bg)">
+          <div class="who">気づいた本人</div>
+          <div class="body"><div class="act">返却のときに「状態＝故障」を選んで報告（写真付き）</div>
+            <div class="note">返却フォームの「状態」で 故障／修理中 を選び、故障箇所の写真を添付</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--auto); --bg:var(--auto-bg)">
+          <div class="who">自動</div>
+          <div class="body"><div class="act">台帳が 🔴故障 表示になり、全員が使用不可と分かる</div>
+            <div class="note">修理に出す・直ったときも同じフォームで状態を報告して更新する</div></div>
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-kogu">
+            <svg viewBox="0 0 100 100" width="86%" height="86%" fill="currentColor">
+              <g>
+                <rect x="27" y="11" width="46" height="3.4" rx="1.7"/>
+                <rect x="31" y="13" width="3" height="6"/>
+                <rect x="66" y="13" width="3" height="6"/>
+                <rect x="35" y="15" width="30" height="9" rx="4"/>
+                <rect x="30" y="22" width="40" height="17" rx="4"/>
+                <circle cx="40" cy="30.5" r="4.3" fill="var(--bg-kogu)"/>
+                <circle cx="40" cy="30.5" r="1.4"/>
+                <rect x="49" y="26.5" width="16" height="9" rx="1.5" fill="var(--bg-kogu)"/>
+                <rect x="51.5" y="29" width="3.2" height="4" rx=".5"/>
+                <rect x="56.5" y="29" width="3.2" height="4" rx=".5"/>
+                <rect x="61" y="29.5" width="2.2" height="3.2" rx=".5"/>
+                <rect x="33" y="39" width="5" height="4.5"/>
+                <rect x="62" y="39" width="5" height="4.5"/>
+              </g>
+              <g transform="translate(27 67) rotate(-28)">
+                <rect x="-12" y="-7" width="19" height="14" rx="7"/>
+                <rect x="-14.5" y="-4" width="3" height="8" rx="1.5"/>
+                <rect x="7" y="-4.5" width="4.5" height="9" rx="2"/>
+                <rect x="11.5" y="-1.6" width="11" height="3.2" rx="1"/>
+                <path d="M-6 7 L4 7 L1.8 21 L-4.5 21 Z"/>
+                <rect x="-6.5" y="19" width="11" height="5.5" rx="2"/>
+                <rect x="1.5" y="8" width="3" height="4.5" rx="1" fill="var(--bg-kogu)"/>
+              </g>
+              <g transform="translate(73 67) rotate(208)">
+                <ellipse cx="-13" cy="0" rx="6.5" ry="6"/>
+                <ellipse cx="-13" cy="0" rx="3.2" ry="3" fill="var(--bg-kogu)"/>
+                <rect x="-8" y="-3" width="6" height="6" rx="2"/>
+                <rect x="-7" y="-7" width="18" height="14" rx="6"/>
+                <rect x="11" y="-5" width="3" height="10" rx="1"/>
+                <rect x="14" y="-1.5" width="11" height="2.8" rx="1"/>
+                <path d="M15 1.3 l1.8 2.6 l1.8 -2.6 z M18.6 1.3 l1.8 2.6 l1.8 -2.6 z M22.2 1.3 l1.8 2.6 l1.8 -2.6 z" fill="currentColor"/>
+              </g>
+            </svg>
+          </span>
+          <span class="fc-icon fc-gas">
+            <svg viewBox="0 0 100 100" width="76%" height="76%" fill="currentColor">
+              <path d="M16 34 q7 -14 14 0 v50 q0 5 -5 5 h-4 q-5 0 -5 -5 z"/>
+              <rect x="20" y="22" width="6" height="12" rx="2"/>
+              <rect x="15" y="50" width="16" height="4" fill="var(--bg-gas)"/>
+              <path d="M34 48 q6.5 -13 13 0 v36 q0 5 -5 5 h-3 q-5 0 -5 -5 z"/>
+              <rect x="37.5" y="38" width="6" height="10" rx="2"/>
+              <rect x="33" y="60" width="15" height="3.6" fill="var(--bg-gas)"/>
+              <g transform="translate(36 24) rotate(35)" fill="currentColor">
+                <rect x="2.5" y="-6" width="9" height="9" rx="2"/>
+                <path d="M4.5 -6 L9.5 -6 L7 -16 Z"/>
+                <rect x="10" y="-3.4" width="30" height="2.2" rx="1.1"/>
+                <rect x="10" y="0.6" width="30" height="2.2" rx="1.1"/>
+                <rect x="22" y="-7.4" width="14" height="2.6" rx="1.3"/>
+                <rect x="40" y="-5" width="8" height="12" rx="2.5"/>
+                <rect x="48" y="-3.6" width="16" height="8.4" rx="4.2"/>
+                <circle cx="44" cy="10" r="3.1"/>
+                <circle cx="53" cy="9.6" r="3.1"/>
+                <circle cx="44" cy="10" r="1.1" fill="var(--bg-gas)"/>
+                <circle cx="53" cy="9.6" r="1.1" fill="var(--bg-gas)"/>
+                <rect x="64" y="-2.4" width="7" height="2.8" rx="1.4"/>
+                <rect x="64" y="2" width="7" height="2.8" rx="1.4"/>
+              </g>
+            </svg>
+          </span>
+          <b>使うフォーム</b>「工具」「ガス溶断器具類」<br>の返却・状態欄（置場のタブレット）
+        </div>
+      </div>
+    </section>
+
+    <!-- 場面3 週1回の在庫照合 -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 3</span>
+        <h2>週に1回の<br>在庫チェック（棚卸し）</h2>
+        <span class="obj">対象：置場の在庫全般</span>
+        <span class="obj">頻度：週1回</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--oki); --bg:var(--oki-bg)">
+          <div class="who">置場資材管理責任者</div>
+          <div class="body"><div class="act">菊建ページの在庫状況と、置場の実物を照らし合わせる</div>
+            <div class="note">「置場在庫」の一覧（工具・ガス類）を見ながら実際の棚を確認し、実状と合っているかチェック</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--oki); --bg:var(--oki-bg)">
+          <div class="who">置場資材管理責任者</div>
+          <div class="body"><div class="act">実状を確認して報告（ズレは訂正して合わせる）</div>
+            <div class="note">記録漏れがあれば持出・返却の報告を送って実状に合わせる。自分で直せないもの・不明品は管理者へ連絡</div></div>
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-kogu">
+            <svg viewBox="0 0 100 100" width="86%" height="86%" fill="currentColor">
+              <g>
+                <rect x="27" y="11" width="46" height="3.4" rx="1.7"/>
+                <rect x="31" y="13" width="3" height="6"/>
+                <rect x="66" y="13" width="3" height="6"/>
+                <rect x="35" y="15" width="30" height="9" rx="4"/>
+                <rect x="30" y="22" width="40" height="17" rx="4"/>
+                <circle cx="40" cy="30.5" r="4.3" fill="var(--bg-kogu)"/>
+                <circle cx="40" cy="30.5" r="1.4"/>
+                <rect x="49" y="26.5" width="16" height="9" rx="1.5" fill="var(--bg-kogu)"/>
+                <rect x="51.5" y="29" width="3.2" height="4" rx=".5"/>
+                <rect x="56.5" y="29" width="3.2" height="4" rx=".5"/>
+                <rect x="61" y="29.5" width="2.2" height="3.2" rx=".5"/>
+                <rect x="33" y="39" width="5" height="4.5"/>
+                <rect x="62" y="39" width="5" height="4.5"/>
+              </g>
+              <g transform="translate(27 67) rotate(-28)">
+                <rect x="-12" y="-7" width="19" height="14" rx="7"/>
+                <rect x="-14.5" y="-4" width="3" height="8" rx="1.5"/>
+                <rect x="7" y="-4.5" width="4.5" height="9" rx="2"/>
+                <rect x="11.5" y="-1.6" width="11" height="3.2" rx="1"/>
+                <path d="M-6 7 L4 7 L1.8 21 L-4.5 21 Z"/>
+                <rect x="-6.5" y="19" width="11" height="5.5" rx="2"/>
+                <rect x="1.5" y="8" width="3" height="4.5" rx="1" fill="var(--bg-kogu)"/>
+              </g>
+              <g transform="translate(73 67) rotate(208)">
+                <ellipse cx="-13" cy="0" rx="6.5" ry="6"/>
+                <ellipse cx="-13" cy="0" rx="3.2" ry="3" fill="var(--bg-kogu)"/>
+                <rect x="-8" y="-3" width="6" height="6" rx="2"/>
+                <rect x="-7" y="-7" width="18" height="14" rx="6"/>
+                <rect x="11" y="-5" width="3" height="10" rx="1"/>
+                <rect x="14" y="-1.5" width="11" height="2.8" rx="1"/>
+                <path d="M15 1.3 l1.8 2.6 l1.8 -2.6 z M18.6 1.3 l1.8 2.6 l1.8 -2.6 z M22.2 1.3 l1.8 2.6 l1.8 -2.6 z" fill="currentColor"/>
+              </g>
+            </svg>
+          </span>
+          <span class="fc-icon fc-gas">
+            <svg viewBox="0 0 100 100" width="76%" height="76%" fill="currentColor">
+              <path d="M16 34 q7 -14 14 0 v50 q0 5 -5 5 h-4 q-5 0 -5 -5 z"/>
+              <rect x="20" y="22" width="6" height="12" rx="2"/>
+              <rect x="15" y="50" width="16" height="4" fill="var(--bg-gas)"/>
+              <path d="M34 48 q6.5 -13 13 0 v36 q0 5 -5 5 h-3 q-5 0 -5 -5 z"/>
+              <rect x="37.5" y="38" width="6" height="10" rx="2"/>
+              <rect x="33" y="60" width="15" height="3.6" fill="var(--bg-gas)"/>
+              <g transform="translate(36 24) rotate(35)" fill="currentColor">
+                <rect x="2.5" y="-6" width="9" height="9" rx="2"/>
+                <path d="M4.5 -6 L9.5 -6 L7 -16 Z"/>
+                <rect x="10" y="-3.4" width="30" height="2.2" rx="1.1"/>
+                <rect x="10" y="0.6" width="30" height="2.2" rx="1.1"/>
+                <rect x="22" y="-7.4" width="14" height="2.6" rx="1.3"/>
+                <rect x="40" y="-5" width="8" height="12" rx="2.5"/>
+                <rect x="48" y="-3.6" width="16" height="8.4" rx="4.2"/>
+                <circle cx="44" cy="10" r="3.1"/>
+                <circle cx="53" cy="9.6" r="3.1"/>
+                <circle cx="44" cy="10" r="1.1" fill="var(--bg-gas)"/>
+                <circle cx="53" cy="9.6" r="1.1" fill="var(--bg-gas)"/>
+                <rect x="64" y="-2.4" width="7" height="2.8" rx="1.4"/>
+                <rect x="64" y="2" width="7" height="2.8" rx="1.4"/>
+              </g>
+            </svg>
+          </span>
+          <b>確認する場所</b>菊建ページの在庫一覧＋<br>訂正は各フォームから
+        </div>
+      </div>
+    </section>
+
+    <!-- 場面4 運搬車両の故障 -->
+    <section class="lane">
+      <div class="lane-label">
+        <span class="scene">場面 4</span>
+        <h2>運搬車両が故障・<br>不調になったら</h2>
+        <span class="obj">対象：全車両</span>
+      </div>
+      <div class="flow">
+        <div class="step" style="--c:var(--sha); --bg:var(--sha-bg)">
+          <div class="who">運搬車両管理責任者</div>
+          <div class="body"><div class="act">「故障発生」を報告</div>
+            <div class="note">気づいた人からの報告（写真付き）をとりまとめて送信</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--sha); --bg:var(--sha-bg)">
+          <div class="who">運搬車両管理責任者</div>
+          <div class="body"><div class="act">「修理依頼」を報告</div>
+            <div class="note">業者へ手配したとき</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--sha); --bg:var(--sha-bg)">
+          <div class="who">運搬車両管理責任者</div>
+          <div class="body"><div class="act">「修理中」を報告</div>
+            <div class="note">修理が始まったとき</div></div>
+        </div>
+        <div class="arr"></div>
+        <div class="step" style="--c:var(--sha); --bg:var(--sha-bg)">
+          <div class="who">運搬車両管理責任者</div>
+          <div class="body"><div class="act">「復旧完了」を報告</div>
+            <div class="note">直って使える状態に戻ったとき</div></div>
+        </div>
+        <div class="formchip">
+          <span class="fc-icon fc-sha">
+            <svg viewBox="0 0 104 104" width="88%" height="88%">
+              <g stroke="#7A5A03" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+                <g transform="rotate(-9 66 52)">
+                  <path d="M36 30 h50 q4 0 4 4 v20 q0 4 -4 4 h-50 q-4 0 -4 -4 v-20 q0 -4 4 -4 z" fill="#F7C531"/>
+                  <path d="M44 32 v24 M55 32 v24 M66 32 v24 M77 32 v24" stroke="#DFA50A" stroke-width="2.4"/>
+                  <path d="M86 30 l6 2 v22 l-6 2" fill="#F2B705"/>
+                </g>
+                <path d="M36 56 l10 -8" stroke="#7A5A03" stroke-width="4"/>
+                <path d="M10 38 h14 q3 0 4.5 3 l4.5 9 q1 2 1 4 v8 H10 q-4 0 -4 -4 V42 q0 -4 4 -4 z" fill="#F7C531"/>
+                <path d="M13 42 h9 l4 8 h-13 z" fill="#BEE3F7"/>
+                <rect x="24" y="52" width="7" height="9" rx="1.5" fill="#DFA50A"/>
+                <rect x="4" y="62" width="94" height="8" rx="4" fill="#4A3B33"/>
+                <rect x="3" y="60" width="8" height="11" rx="2.5" fill="#C7C2B8"/>
+              </g>
+              <g fill="#B98F55">
+                <circle cx="97" cy="63" r="2.8"/>
+                <circle cx="92" cy="72" r="2.3"/>
+                <circle cx="99" cy="78" r="1.9"/>
+              </g>
+              <circle cx="20" cy="77" r="11" fill="#4A3B33"/><circle cx="20" cy="77" r="4.8" fill="#fff"/><circle cx="20" cy="77" r="1.9" fill="#4A3B33"/>
+              <circle cx="60" cy="77" r="11" fill="#4A3B33"/><circle cx="60" cy="77" r="4.8" fill="#fff"/><circle cx="60" cy="77" r="1.9" fill="#4A3B33"/>
+              <circle cx="82" cy="77" r="11" fill="#4A3B33"/><circle cx="82" cy="77" r="4.8" fill="#fff"/><circle cx="82" cy="77" r="1.9" fill="#4A3B33"/>
+            </svg>
+            <svg class="fc-band" viewBox="0 0 120 42">
+              <rect x="2" y="7" width="116" height="28" rx="14" fill="#EBB089"/>
+              <rect x="43" y="10" width="34" height="22" rx="5" fill="#FBE7D4"/>
+              <g fill="rgba(255,255,255,.6)">
+                <circle cx="14" cy="14" r="1.5"/><circle cx="22" cy="14" r="1.5"/><circle cx="14" cy="21" r="1.5"/><circle cx="22" cy="21" r="1.5"/><circle cx="14" cy="28" r="1.5"/><circle cx="22" cy="28" r="1.5"/>
+                <circle cx="98" cy="14" r="1.5"/><circle cx="106" cy="14" r="1.5"/><circle cx="98" cy="21" r="1.5"/><circle cx="106" cy="21" r="1.5"/><circle cx="98" cy="28" r="1.5"/><circle cx="106" cy="28" r="1.5"/>
+              </g>
+            </svg>
+          </span>
+          <b>使うフォーム</b>「運搬車両」故障対応報告<br>（スマホから）
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 報告のあと（共通） -->
+  <div class="after">
+    <div class="step" style="--c:var(--auto); --bg:var(--auto-bg)">
+      <div class="who">自動</div>
+      <div class="body"><div class="act">報告すると台帳がすぐ最新になる</div>
+        <div class="note">最新の報告が状態・現在地に反映（上書きではなく履歴として積み上がる）</div></div>
+    </div>
+    <div class="arr"></div>
+    <div class="step" style="--c:var(--auto); --bg:var(--auto-bg)">
+      <div class="who">全社員</div>
+      <div class="body"><div class="act">菊建ページでいつでも確認（報告は不要）</div>
+        <div class="note">在庫・所在・故障状況はスマホで閲覧のみ。菊建ページからは入力できません</div></div>
+    </div>
+    <div class="step admin" style="--c:var(--admin); --bg:var(--admin-bg)">
+      <div class="who">管理者</div>
+      <div class="body"><div class="act">台帳の整理と、システム全体の管理</div>
+        <div class="note">報告ログを見て台帳を整える。フォームURLの配布は管理者から各管理者へ（LINEで）</div></div>
+    </div>
+  </div>
+
+  <div class="rules">
+    <div class="cap">覚えておくこと</div>
+    <ul>
+      <li>工具・ガス溶断器具類の持出・返却は<b>全員が必ずその場で入力</b>（1本・1つでも必ず）</li>
+      <li>報告は「状況が変わったら、そのつど1件」。前の報告は書き換えず、新しく送るだけ</li>
+      <li>最新の報告がそのまま菊建ページに出る。迷ったら報告してOK（あとから訂正の1件を送れば直る）</li>
+      <li>フォームは配布されたURLとタブレットからだけ入力できる。URLは他の人に転送しない</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    <span>菊建興業 資機材管理システム</span>
+    <span>不明な点は 管理者まで</span>
+  </div>
+
+</div></div>
